@@ -21,6 +21,9 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     MapView map = null;
@@ -37,31 +40,11 @@ public class MainActivity extends AppCompatActivity {
         map.setMultiTouchControls(true);
 
         IMapController mapController = map.getController();
-        mapController.setZoom(10);
+
+
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-// Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                //makeUseOfNewLocation(location);
-
-                double alt = location.getAltitude();
-
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
-
-// Register the listener with the Location Manager to receive location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -72,10 +55,43 @@ public class MainActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        final List<Double> tokenContainer = new ArrayList<>();
+
+// Define a listener that responds to location updates
+        final LocationListener locationListener = new LocationListener() {
+            
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                //makeUseOfNewLocation(location);
+
+                tokenContainer.add(location.getLongitude());
+
+                tokenContainer.add(location.getLatitude());
 
 
-        GeoPoint startPoint = new GeoPoint(53.90, 30.30);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+
+        GeoPoint startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+        if (tokenContainer.size()>0) {
+
+             startPoint = new GeoPoint(tokenContainer.get(0), tokenContainer.get(1));
+        }
+        mapController.setZoom(15.5);
         mapController.setCenter(startPoint);
 
 

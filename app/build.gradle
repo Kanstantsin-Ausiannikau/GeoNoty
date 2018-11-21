@@ -26,6 +26,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('libs/OsmDroid/osmdroid-android-4.2.jar')
+
+    compile 'org.osmdroid:osmdroid-android:6.0.2'
     implementation files('libs/OsmDroid/slf4j-android-1.5.8.jar')
 }
